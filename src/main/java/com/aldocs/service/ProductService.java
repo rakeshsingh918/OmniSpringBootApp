@@ -1,49 +1,52 @@
 package com.aldocs.service;
 
-import com.aldocs.model.AIMJob;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.aldocs.model.AIMJob;
+import com.aldocs.repositories.dev.DevAIMJobRepository;
+import com.aldocs.repositories.qa.QaAIMJobRepository;
 
 @Service
 public class ProductService {
 
-  public List<AIMJob> findAllJob() {
-    AIMJob aimJob = new AIMJob();
-    aimJob.setActive(true);
-    AIMJob aimJob1 = new AIMJob();
-    aimJob1.setActive(true);
-    AIMJob aimJob2 = new AIMJob();
-    aimJob2.setActive(true);
-    List<AIMJob> aimJobList = new ArrayList<>();
-    aimJobList.add(aimJob);
-    aimJobList.add(aimJob1);
-    aimJobList.add(aimJob2);
-    return aimJobList;
-  }
+	@Autowired
+	DevAIMJobRepository devRepository;
 
-  public AIMJob findById(int id) {
-    return new AIMJob();
-  }
+	@Autowired
+	QaAIMJobRepository qaRepository;
+	
+	//Similar way You Inject the Other Repository
+	//for Prod and UAT
+	
 
-  public AIMJob findById(Long id) {
-    return new AIMJob();
-  }
+	public Optional<AIMJob> findById(int id) {
+		
+		//Based on Passed @param we can call diff DB repo to get or check the Data
+		if (id == 1)
+			return devRepository.findById(id);
+		else
+			return qaRepository.findById(id);
+	}
 
-  public void saveJob(AIMJob product) {
-    System.out.println("new job saved");
-  }
+	/*
+	 * @Transactional public void saveProduct(com.aldocs.json.AIMJob aimJob) {
+	 * System.out.println("new job saved"); AIMJob aimJob1 = new AIMJob();
+	 * aimJob1.setDescription(aimJob.getDescription());
+	 * aimJob1.setCategory(aimJob.getCategory());
+	 * aimJob1.setShowTo(aimJob.getShowTo()); aimJob1.setActive(aimJob.isActive());
+	 * devRepository.save(aimJob1); }
+	 */
 
-  public void updateJob(AIMJob currentProduct) {
-    System.out.println("updated job saved");
-  }
+	public List<AIMJob> getAllJob() {
+		return (List<AIMJob>) devRepository.findAll();
+	}
 
-  public void deleteJobById(long id) {
-    System.out.println("updated job deleted");
-  }
+	public AIMJob saveAIMJob(AIMJob aimJob) {
+		return devRepository.save(aimJob);
+	}
 
-  public void deleteAllJob() {
-    System.out.println("updated job deleted");
-  }
 }
